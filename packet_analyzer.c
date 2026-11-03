@@ -6,6 +6,7 @@
 
 #include "loco_analyzer.h"
 #include "accessory_analyzer.h"
+#include "service_analyzer.h"
 
 #define HEX_DISPLAY_WIDTH 6
 
@@ -115,6 +116,10 @@ void packet_analyzer(
     else if(packet->data[0] == 0x00)
     {
         printf("Reset");
+    }
+    else if(is_service_packet(packet))
+    {
+        analyze_service(packet);
     }
     else if((packet->data[0] & 0xC0) == 0x80)
     {
