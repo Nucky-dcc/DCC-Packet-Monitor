@@ -6,38 +6,48 @@
 #include "dcc_decode.h"
 #include "dcc_packet.h"
 #include "packet_analyzer.h"
-
+#include "monitor_config.h"
+#include "menu.h"
 
 int main(void)
 {
     stdio_init_all();
 
-    sleep_ms(3000);
-
     printf("\r\n");
     printf("DCC Packet Monitor\r\n");
 
     dcc_init();
-
     dcc_decode_init();
-
     dcc_packet_init();
-
     packet_analyzer_init();
+
+    monitor_config_init();
+
+    printf("\r\n");
+    printf("DCCパケットモニタ\r\n");
+    printf("ENTERでメニュー表示\r\n");
 
     while(true)
     {
-        dcc_task();
+        int ch;
 
-        dcc_decode_task();
+        ch = getchar_timeout_us(0);
 
-        dcc_packet_task();
-
-        DCC_PACKET packet;
-
-        while(dcc_get_packet(&packet))
+        if(ch >= 0)
         {
-            packet_analyzer(&packet);
+            if((ch == '\r') ||
+            (ch == '\n'))
+            {
+                menu_show_main();
+            }
+            else
+            {
+                menu_process_key(ch);
+            }
         }
+
+        dcc_task();
     }
+
+    return 0;
 }
