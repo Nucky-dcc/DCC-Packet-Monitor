@@ -25,9 +25,24 @@ typedef struct
 } PACKET_STATISTICS;
 
 /*
+ * 信号統計情報
+ */
+typedef struct
+{
+    uint32_t bit0_count;
+    uint32_t bit1_count;
+
+    uint64_t bit0_total_us;
+    uint64_t bit1_total_us;
+
+} SIGNAL_STATISTICS;
+
+/*
  * 統計データ
  */
 extern PACKET_STATISTICS packet_statistics;
+extern SIGNAL_STATISTICS signal_statistics;
+
 
 /*
  * 初期化
@@ -57,5 +72,14 @@ void statistics_count_crc_error(void);
 
 void statistics_add_elapsed_us(
     uint32_t elapsed_us);
+
+void statistics_count_bit0(void);
+void statistics_count_bit1(void);
+
+void statistics_add_bit0_width(
+    uint32_t width_us);
+
+void statistics_add_bit1_width(
+    uint32_t width_us);
 
 #endif

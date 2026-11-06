@@ -10,6 +10,9 @@
  */
 PACKET_STATISTICS packet_statistics;
 
+SIGNAL_STATISTICS signal_statistics;
+
+
 /*
  * 飽和カウンタ加算
  */
@@ -46,6 +49,12 @@ void statistics_init(void)
     packet_statistics.crc_error = 0;
 
     packet_statistics.elapsed_us = 0;
+
+    signal_statistics.bit0_count = 0;
+    signal_statistics.bit1_count = 0;
+
+    signal_statistics.bit0_total_us = 0;
+    signal_statistics.bit1_total_us = 0;
 }
 
 /*
@@ -141,6 +150,52 @@ void statistics_add_elapsed_us(
     else
     {
         packet_statistics.elapsed_us =
+            UINT64_MAX;
+    }
+}
+
+void statistics_count_bit0(void)
+{
+    count_up(
+        &signal_statistics.bit0_count);
+}
+
+void statistics_count_bit1(void)
+{
+    count_up(
+        &signal_statistics.bit1_count);
+}
+
+void statistics_add_bit0_width(
+    uint32_t width_us)
+{
+    if((UINT64_MAX -
+        signal_statistics.bit0_total_us)
+       >= width_us)
+    {
+        signal_statistics.bit0_total_us +=
+            width_us;
+    }
+    else
+    {
+        signal_statistics.bit0_total_us =
+            UINT64_MAX;
+    }
+}
+
+void statistics_add_bit1_width(
+    uint32_t width_us)
+{
+    if((UINT64_MAX -
+        signal_statistics.bit1_total_us)
+       >= width_us)
+    {
+        signal_statistics.bit1_total_us +=
+            width_us;
+    }
+    else
+    {
+        signal_statistics.bit1_total_us =
             UINT64_MAX;
     }
 }

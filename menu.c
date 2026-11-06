@@ -113,7 +113,15 @@ static void menu_show_packet_stats(void)
     uint32_t elapsed_sec;
     uint32_t elapsed_ms;
 
-    uint32_t packets_per_sec;
+    uint32_t packets_per_sec_x10;
+
+    uint32_t reset_rate_x10;
+    uint32_t idle_rate_x10;
+    uint32_t loco_rate_x10;
+    uint32_t accessory_rate_x10;
+    uint32_t ops_rate_x10;
+    uint32_t service_rate_x10;
+    uint32_t crc_rate_x10;
 
     current_menu = MENU_PACKET_STATS;
 
@@ -127,20 +135,61 @@ static void menu_show_packet_stats(void)
     elapsed_ms =
         (uint32_t)
         ((elapsed_us % 1000000ULL)
-        / 1000ULL);
+         / 1000ULL);
 
     if(elapsed_us == 0)
     {
-        packets_per_sec = 0;
+        packets_per_sec_x10 = 0;
     }
     else
     {
-        packets_per_sec =
+        packets_per_sec_x10 =
             (uint32_t)
             (((uint64_t)
-            packet_statistics.total
-            * 1000000ULL)
-            / elapsed_us);
+              packet_statistics.total
+              * 10000000ULL)
+             / elapsed_us);
+    }
+
+    if(packet_statistics.total == 0)
+    {
+        reset_rate_x10     = 0;
+        idle_rate_x10      = 0;
+        loco_rate_x10      = 0;
+        accessory_rate_x10 = 0;
+        ops_rate_x10       = 0;
+        service_rate_x10   = 0;
+        crc_rate_x10       = 0;
+    }
+    else
+    {
+        reset_rate_x10 =
+            (packet_statistics.reset * 1000U)
+            / packet_statistics.total;
+
+        idle_rate_x10 =
+            (packet_statistics.idle * 1000U)
+            / packet_statistics.total;
+
+        loco_rate_x10 =
+            (packet_statistics.loco * 1000U)
+            / packet_statistics.total;
+
+        accessory_rate_x10 =
+            (packet_statistics.accessory * 1000U)
+            / packet_statistics.total;
+
+        ops_rate_x10 =
+            (packet_statistics.ops * 1000U)
+            / packet_statistics.total;
+
+        service_rate_x10 =
+            (packet_statistics.service * 1000U)
+            / packet_statistics.total;
+
+        crc_rate_x10 =
+            (packet_statistics.crc_error * 1000U)
+            / packet_statistics.total;
     }
 
     printf("\r\n\r\n");
@@ -155,50 +204,89 @@ static void menu_show_packet_stats(void)
         (unsigned long)elapsed_ms);
 
     printf(
-        "平均速度    : %lu pkt/s\r\n",
-        (unsigned long)packets_per_sec);
+        "平均速度    : %lu.%01lu pkt/s\r\n",
+        (unsigned long)
+            (packets_per_sec_x10 / 10),
+        (unsigned long)
+            (packets_per_sec_x10 % 10));
 
     printf("\r\n");
 
-    printf("Total       : %lu\r\n",
+    printf(
+        "Total       : %lu\r\n",
         (unsigned long)
         packet_statistics.total);
 
     printf("\r\n");
 
-    printf("Reset       : %lu\r\n",
+    printf(
+        "Reset       : %5lu (%2lu.%01lu%%)\r\n",
         (unsigned long)
-        packet_statistics.reset);
+            packet_statistics.reset,
+        (unsigned long)
+            (reset_rate_x10 / 10),
+        (unsigned long)
+            (reset_rate_x10 % 10));
 
-    printf("Idle        : %lu\r\n",
+    printf(
+        "Idle        : %5lu (%2lu.%01lu%%)\r\n",
         (unsigned long)
-        packet_statistics.idle);
+            packet_statistics.idle,
+        (unsigned long)
+            (idle_rate_x10 / 10),
+        (unsigned long)
+            (idle_rate_x10 % 10));
 
     printf("\r\n");
 
-    printf("Loco        : %lu\r\n",
+    printf(
+        "Loco        : %5lu (%2lu.%01lu%%)\r\n",
         (unsigned long)
-        packet_statistics.loco);
+            packet_statistics.loco,
+        (unsigned long)
+            (loco_rate_x10 / 10),
+        (unsigned long)
+            (loco_rate_x10 % 10));
 
-    printf("Accessory   : %lu\r\n",
+    printf(
+        "Accessory   : %5lu (%2lu.%01lu%%)\r\n",
         (unsigned long)
-        packet_statistics.accessory);
+            packet_statistics.accessory,
+        (unsigned long)
+            (accessory_rate_x10 / 10),
+        (unsigned long)
+            (accessory_rate_x10 % 10));
 
     printf("\r\n");
 
-    printf("OPS         : %lu\r\n",
+    printf(
+        "OPS         : %5lu (%2lu.%01lu%%)\r\n",
         (unsigned long)
-        packet_statistics.ops);
+            packet_statistics.ops,
+        (unsigned long)
+            (ops_rate_x10 / 10),
+        (unsigned long)
+            (ops_rate_x10 % 10));
 
-    printf("Service     : %lu\r\n",
+    printf(
+        "Service     : %5lu (%2lu.%01lu%%)\r\n",
         (unsigned long)
-        packet_statistics.service);
+            packet_statistics.service,
+        (unsigned long)
+            (service_rate_x10 / 10),
+        (unsigned long)
+            (service_rate_x10 % 10));
 
     printf("\r\n");
 
-    printf("CRC Error   : %lu\r\n",
+    printf(
+        "CRC Error   : %5lu (%2lu.%01lu%%)\r\n",
         (unsigned long)
-        packet_statistics.crc_error);
+            packet_statistics.crc_error,
+        (unsigned long)
+            (crc_rate_x10 / 10),
+        (unsigned long)
+            (crc_rate_x10 % 10));
 
     printf("\r\n");
 
@@ -206,10 +294,98 @@ static void menu_show_packet_stats(void)
     printf("ESC : 戻る\r\n");
 }
 
-
 static void menu_show_signal_stats(void)
 {
+    uint64_t elapsed_us;
+
+    uint32_t elapsed_sec;
+    uint32_t elapsed_ms;
+
+    uint32_t total_bit;
+
+    uint32_t bit_rate_x10;
+
+    uint32_t bit0_rate_x10;
+    uint32_t bit1_rate_x10;
+
+    uint32_t bit0_avg_x10;
+    uint32_t bit1_avg_x10;
+
     current_menu = MENU_SIGNAL_STATS;
+
+    elapsed_us =
+        packet_statistics.elapsed_us;
+
+    elapsed_sec =
+        (uint32_t)
+        (elapsed_us / 1000000ULL);
+
+    elapsed_ms =
+        (uint32_t)
+        ((elapsed_us % 1000000ULL)
+         / 1000ULL);
+
+    total_bit =
+        signal_statistics.bit0_count +
+        signal_statistics.bit1_count;
+
+    if(elapsed_us == 0)
+    {
+        bit_rate_x10 = 0;
+    }
+    else
+    {
+        bit_rate_x10 =
+            (uint32_t)
+            (((uint64_t)
+              total_bit
+              * 10000000ULL)
+             / elapsed_us);
+    }
+
+    if(total_bit == 0)
+    {
+        bit0_rate_x10 = 0;
+        bit1_rate_x10 = 0;
+    }
+    else
+    {
+        bit0_rate_x10 =
+            (signal_statistics.bit0_count
+             * 1000U)
+            / total_bit;
+
+        bit1_rate_x10 =
+            (signal_statistics.bit1_count
+             * 1000U)
+            / total_bit;
+    }
+
+    if(signal_statistics.bit0_count == 0)
+    {
+        bit0_avg_x10 = 0;
+    }
+    else
+    {
+        bit0_avg_x10 =
+            (uint32_t)
+            ((signal_statistics.bit0_total_us
+            * 10ULL)
+            / signal_statistics.bit0_count);
+    }
+
+    if(signal_statistics.bit1_count == 0)
+    {
+        bit1_avg_x10 = 0;
+    }
+    else
+    {
+        bit1_avg_x10 =
+            (uint32_t)
+            ((signal_statistics.bit1_total_us
+            * 10ULL)
+            / signal_statistics.bit1_count);
+    }
 
     printf("\r\n\r\n");
 
@@ -219,11 +395,66 @@ static void menu_show_signal_stats(void)
 
     printf("\r\n");
 
-    printf("信号統計機能は未実装\r\n");
+    printf(
+        "測定時間    : %lu.%03lus\r\n",
+        (unsigned long)elapsed_sec,
+        (unsigned long)elapsed_ms);
+
+    printf(
+        "平均速度    : %lu.%01lu bit/s\r\n",
+        (unsigned long)
+            (bit_rate_x10 / 10),
+        (unsigned long)
+            (bit_rate_x10 % 10));
 
     printf("\r\n");
+
+    printf(
+        "Total Bit   : %5lu\r\n",
+        (unsigned long)total_bit);
+
+    printf("\r\n");
+
+    printf(
+        "Bit1        : %5lu (%2lu.%01lu%%)\r\n",
+        (unsigned long)
+            signal_statistics.bit1_count,
+        (unsigned long)
+            (bit1_rate_x10 / 10),
+        (unsigned long)
+            (bit1_rate_x10 % 10));
+
+    printf(
+        "Bit0        : %5lu (%2lu.%01lu%%)\r\n",
+        (unsigned long)
+            signal_statistics.bit0_count,
+        (unsigned long)
+            (bit0_rate_x10 / 10),
+        (unsigned long)
+            (bit0_rate_x10 % 10));
+
+    printf("\r\n");
+
+    printf(
+        "Bit1 Avg    : %lu.%01luus\r\n",
+        (unsigned long)
+            (bit1_avg_x10 / 10),
+        (unsigned long)
+            (bit1_avg_x10 % 10));
+
+    printf(
+        "Bit0 Avg    : %lu.%01luus\r\n",
+        (unsigned long)
+            (bit0_avg_x10 / 10),
+        (unsigned long)
+            (bit0_avg_x10 % 10));
+
+    printf("\r\n");
+
+    printf("R   : 統計クリア\r\n");
     printf("ESC : 戻る\r\n");
 }
+
 
 static void menu_show_settings(void)
 {
@@ -431,6 +662,13 @@ void menu_process_key(int ch)
             break;
 
         case MENU_SIGNAL_STATS:
+            if((ch == 'r') ||
+            (ch == 'R'))
+            {
+                statistics_reset();
+
+                menu_show_signal_stats();
+            }
             break;
 
         case MENU_SETTINGS:

@@ -4,6 +4,7 @@
 
 #include "dcc_rx.h"
 #include "dcc_decode.h"
+#include "statistics.h"
 
 #define DCC_BIT_BUFFER_SIZE     1024
 
@@ -59,10 +60,20 @@ void dcc_decode_task(void)
         if(edge.width_us <= DCC_ONE_THRESHOLD_US)
         {
             bit_value = 1;
+
+            statistics_count_bit1();
+
+            statistics_add_bit1_width(
+                edge.width_us);
         }
         else
         {
             bit_value = 0;
+
+            statistics_count_bit0();
+
+            statistics_add_bit0_width(
+                edge.width_us);
         }
 
         next_head =
