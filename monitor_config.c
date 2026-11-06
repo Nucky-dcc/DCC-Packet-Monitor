@@ -9,7 +9,6 @@ void monitor_config_init(void)
     monitor_config.show_reset = true;
     monitor_config.show_idle  = true;
 
-    monitor_config.address_filter_enable = false;
     monitor_config.address_filter = 0;
 
     monitor_config.threshold_us = 87;

@@ -192,3 +192,8 @@ bool dcc_get_packet(DCC_PACKET *packet)
 
     return true;
 }
+
+void dcc_packet_flush(void)
+{
+    packet_tail = packet_head;
+}

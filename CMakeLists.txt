@@ -47,6 +47,7 @@ add_executable(DCC_Monitor
     ops_analyzer.c
     monitor_config.c
     menu.c
+    statistics.c
 )
 
 pico_set_program_name(DCC_Monitor "DCC_Monitor")

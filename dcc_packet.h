@@ -17,10 +17,12 @@ typedef struct
 
 } DCC_PACKET;
 
+bool dcc_get_packet(DCC_PACKET *packet);
+
 void dcc_packet_init(void);
 
 void dcc_packet_task(void);
 
-bool dcc_get_packet(DCC_PACKET *packet);
+void dcc_packet_flush(void);
 
 #endif

@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 #ifndef MENU_H
 #define MENU_H
 
@@ -10,9 +12,11 @@ typedef enum
     MENU_MONITOR,
     MENU_PACKET_STATS,
     MENU_SIGNAL_STATS,
+
     MENU_SETTINGS,
 
-    MENU_FILTER
+    MENU_FILTER,
+    MENU_ADDRESS
 
 } MENU_STATE;
 
@@ -25,5 +29,7 @@ void menu_show_main(void);
  * キー入力処理
  */
 void menu_process_key(int ch);
+
+bool menu_is_monitor_mode(void);
 
 #endif

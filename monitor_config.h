@@ -20,7 +20,6 @@ typedef struct
     bool show_reset;
     bool show_idle;
 
-    bool address_filter_enable;
     uint16_t address_filter;
 
     uint16_t threshold_us;

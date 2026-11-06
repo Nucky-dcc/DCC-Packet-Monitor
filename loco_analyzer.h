@@ -3,6 +3,8 @@
 
 #include "dcc_packet.h"
 
+void packet_analyzer_init(void);
+
 void analyze_loco(
     const DCC_PACKET *packet);
 

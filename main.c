@@ -30,23 +30,28 @@ int main(void)
     while(true)
     {
         int ch;
+        DCC_PACKET packet;
 
         ch = getchar_timeout_us(0);
 
         if(ch >= 0)
         {
-            if((ch == '\r') ||
-            (ch == '\n'))
-            {
-                menu_show_main();
-            }
-            else
-            {
-                menu_process_key(ch);
-            }
+            menu_process_key(ch);
         }
 
         dcc_task();
+
+        dcc_decode_task();
+
+        dcc_packet_task();
+
+        while(dcc_get_packet(&packet))
+        {
+            if(menu_is_monitor_mode())
+            {
+                packet_analyzer(&packet);
+            }
+        }
     }
 
     return 0;
