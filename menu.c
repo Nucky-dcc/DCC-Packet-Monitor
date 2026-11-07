@@ -308,8 +308,12 @@ static void menu_show_signal_stats(void)
     uint32_t bit0_rate_x10;
     uint32_t bit1_rate_x10;
 
-    uint32_t bit0_avg_x10;
-    uint32_t bit1_avg_x10;
+    uint32_t bit1_mode_us;
+    uint32_t bit0_mode_us;
+
+    uint32_t histogram_count;
+
+    uint16_t i;
 
     current_menu = MENU_SIGNAL_STATS;
 
@@ -361,31 +365,14 @@ static void menu_show_signal_stats(void)
             / total_bit;
     }
 
-    if(signal_statistics.bit0_count == 0)
-    {
-        bit0_avg_x10 = 0;
-    }
-    else
-    {
-        bit0_avg_x10 =
-            (uint32_t)
-            ((signal_statistics.bit0_total_us
-            * 10ULL)
-            / signal_statistics.bit0_count);
-    }
+    bit1_mode_us =
+        statistics_get_bit1_mode();
 
-    if(signal_statistics.bit1_count == 0)
-    {
-        bit1_avg_x10 = 0;
-    }
-    else
-    {
-        bit1_avg_x10 =
-            (uint32_t)
-            ((signal_statistics.bit1_total_us
-            * 10ULL)
-            / signal_statistics.bit1_count);
-    }
+    bit0_mode_us =
+        statistics_get_bit0_mode();
+
+    histogram_count =
+        statistics_get_histogram_count();
 
     printf("\r\n\r\n");
 
@@ -436,25 +423,84 @@ static void menu_show_signal_stats(void)
     printf("\r\n");
 
     printf(
-        "Bit1 Avg    : %lu.%01luus\r\n",
+        "Bit1 Mode   : %5luus\r\n",
         (unsigned long)
-            (bit1_avg_x10 / 10),
-        (unsigned long)
-            (bit1_avg_x10 % 10));
-
-    printf(
-        "Bit0 Avg    : %lu.%01luus\r\n",
-        (unsigned long)
-            (bit0_avg_x10 / 10),
-        (unsigned long)
-            (bit0_avg_x10 % 10));
+            bit1_mode_us);
 
     printf("\r\n");
 
+    printf(
+        "Bit0 Mode   : %5luus\r\n",
+        (unsigned long)
+            bit0_mode_us);
+
+    printf("\r\n");
+
+    printf(
+        "Under 50us  : %lu\r\n",
+        (unsigned long)
+            signal_statistics.
+                under_50us_count);
+
+    printf(
+        "50-300us    : %lu\r\n",
+        (unsigned long)
+            histogram_count);
+
+    printf(
+        "301-10000   : %lu\r\n",
+        (unsigned long)
+            signal_statistics.
+                range_301_10000us_count);
+
+    printf(
+        "Over 10000us: %lu\r\n",
+        (unsigned long)
+            signal_statistics.
+                over_10000us_count);
+
+    printf("\r\n");
+
+    printf("H   : Histogram\r\n");
     printf("R   : 統計クリア\r\n");
     printf("ESC : 戻る\r\n");
 }
 
+static void menu_show_signal_histogram(void)
+{
+    uint16_t i;
+
+    current_menu =
+    MENU_SIGNAL_HISTOGRAM;
+
+    printf("\r\n\r\n");
+
+    printf("================================\r\n");
+    printf(" Histogram\r\n");
+    printf("================================\r\n");
+
+    printf("\r\n");
+
+    for(i = 0;
+        i < 251;
+        i++)
+    {
+        if(signal_statistics.hist_50_300[i] == 0)
+        {
+            continue;
+        }
+
+        printf(
+            "%3u us : %lu\r\n",
+            (unsigned int)(i + 50),
+            (unsigned long)
+                signal_statistics.hist_50_300[i]);
+    }
+
+    printf("\r\n");
+
+    printf("ESC : 戻る\r\n");
+}
 
 static void menu_show_settings(void)
 {
@@ -600,6 +646,10 @@ void menu_process_key(int ch)
                 menu_show_main();
                 break;
 
+            case MENU_SIGNAL_HISTOGRAM:
+                menu_show_signal_stats();
+                break;
+
             default:
                 menu_show_main();
                 break;
@@ -662,13 +712,21 @@ void menu_process_key(int ch)
             break;
 
         case MENU_SIGNAL_STATS:
+
+            if((ch == 'h') ||
+            (ch == 'H'))
+            {
+                menu_show_signal_histogram();
+                return;
+            }
+
             if((ch == 'r') ||
             (ch == 'R'))
             {
                 statistics_reset();
-
                 menu_show_signal_stats();
             }
+
             break;
 
         case MENU_SETTINGS:

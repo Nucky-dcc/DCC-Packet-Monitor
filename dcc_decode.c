@@ -45,6 +45,12 @@ void dcc_decode_task(void)
         }
 
         /*
+        * Histogram
+        */
+        statistics_add_histogram(
+            edge.width_us);
+
+        /*
          * ノイズ除去
          */
 
@@ -65,6 +71,9 @@ void dcc_decode_task(void)
 
             statistics_add_bit1_width(
                 edge.width_us);
+            
+            statistics_update_bit1_minmax(
+                edge.width_us);
         }
         else
         {
@@ -73,6 +82,9 @@ void dcc_decode_task(void)
             statistics_count_bit0();
 
             statistics_add_bit0_width(
+                edge.width_us);
+            
+            statistics_update_bit0_minmax(
                 edge.width_us);
         }
 

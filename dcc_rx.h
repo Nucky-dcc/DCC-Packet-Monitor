@@ -9,7 +9,7 @@
 typedef struct
 {
     uint32_t timestamp_us;
-    uint16_t width_us;
+    uint32_t width_us;
     uint8_t level;
 } DCC_EDGE;
 

@@ -35,6 +35,24 @@ typedef struct
     uint64_t bit0_total_us;
     uint64_t bit1_total_us;
 
+    uint32_t bit0_min_us;
+    uint32_t bit0_max_us;
+
+    uint32_t bit1_min_us;
+    uint32_t bit1_max_us;
+
+    /*
+     * Histogram
+     */
+
+    uint32_t under_50us_count;
+
+    uint32_t hist_50_300[251];
+
+    uint32_t range_301_10000us_count;
+
+    uint32_t over_10000us_count;
+
 } SIGNAL_STATISTICS;
 
 /*
@@ -81,5 +99,20 @@ void statistics_add_bit0_width(
 
 void statistics_add_bit1_width(
     uint32_t width_us);
+
+void statistics_update_bit0_minmax(
+    uint32_t width_us);
+
+void statistics_update_bit1_minmax(
+    uint32_t width_us);
+
+void statistics_add_histogram(
+    uint32_t width_us);
+
+uint32_t statistics_get_bit1_mode(void);
+
+uint32_t statistics_get_bit0_mode(void);
+
+uint32_t statistics_get_histogram_count(void);
 
 #endif

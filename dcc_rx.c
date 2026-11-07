@@ -45,7 +45,7 @@ void dcc_task(void)
         if(next_head != rx_tail)
         {
             rx_buffer[rx_head].timestamp_us = now;
-            rx_buffer[rx_head].width_us     = (uint16_t)width;
+            rx_buffer[rx_head].width_us     = width;
             rx_buffer[rx_head].level        = (uint8_t)state;
 
             rx_head = next_head;
