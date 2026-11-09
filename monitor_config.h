@@ -41,10 +41,33 @@
  */
 typedef enum
 {
-    FILTER_ALL,        /**< 全パケット表示 */
-    FILTER_LOCO,       /**< 機関車制御パケットのみ */
-    FILTER_ACCESSORY,  /**< アクセサリパケットのみ */
-    FILTER_OPS         /**< OPS Mode Programmingのみ */
+    FILTER_ALL,
+
+    /**
+     * @brief 機関車パケット全体
+     */
+    FILTER_LOCO,
+
+    /**
+     * @brief 機関車速度制御のみ
+     */
+    FILTER_LOCO_SPEED,
+
+    /**
+     * @brief 機関車ファンクションのみ
+     */
+    FILTER_LOCO_FUNCTION,
+
+    /**
+     * @brief アクセサリパケットのみ
+     */
+    FILTER_ACCESSORY,
+
+    /**
+     * @brief OPS Mode Programmingのみ
+     */
+    FILTER_OPS
+
 } FILTER_MODE;
 
 /**

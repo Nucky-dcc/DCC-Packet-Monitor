@@ -41,6 +41,8 @@
 - パケット種別フィルタ
   - ALL
   - LOCO
+  - LOCO(Speed)
+  - LOCO(Function)
   - ACCESSORY
   - OPS
 

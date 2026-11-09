@@ -201,6 +201,9 @@ CRC確認
 - メニュー表示
 - キー入力処理
 - 設定変更
+- 表示フィルタ設定
+- アドレスフィルタ設定
+- 統計画面管理
 
 解析ロジックを持たない。
 
@@ -262,8 +265,19 @@ Mode Analysis
 Short Address
 Long Address
 128 Speed Step
-Function Commands
+Function Group 1 (F0-F4)
+Function Group 2 (F5-F8)
+Function Group 3 (F9-F12)
+Function Expansion (F13-F68)
 ```
+
+表示フィルタ
+```text
+Loco
+Loco (Speed)
+Loco (Function)
+```
+
 
 ---
 
@@ -275,9 +289,13 @@ Function Commands
 
 ```text
 Basic Accessory Packet
-Straight
-Diverging
+アドレス復元
+出力番号復元
+Straight / Diverging 表示
 ```
+
+NMRA Basic Accessory Packet の　Closed / Thrown　状態を
+Straight / Diverging　の一般的なポイント表記も併記して表示する。
 
 ---
 
@@ -326,8 +344,15 @@ Service
 CRC Error
 ```
 
+本統計は
+現在の表示条件
+パケット種別フィルタ
+アドレスフィルタ
+を通過したパケットを対象とする。
+
 目的
 
+- パケット観測
 - 流量解析
 - プロトコル分析
 
@@ -344,6 +369,8 @@ Histogram
 Bit0 Mode
 Bit1 Mode
 ```
+本統計は「DCC 0/1信号 受信統計」で表示される。
+パケット種別フィルタや アドレスフィルタの影響を受けず、受信した全DCC信号を対象に集計する。
 
 目的
 
@@ -417,9 +444,11 @@ GUI表示
 
 # 9. Future Extensions
 
-予定候補
+候補
 
 ```text
+Physical Register Mode
+
 Extended Accessory Packet
 
 RailCom解析

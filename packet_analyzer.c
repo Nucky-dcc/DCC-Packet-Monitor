@@ -146,6 +146,116 @@ static bool check_crc(
 }
 
 /**
+ * @brief 機関車速度制御パケット判定
+ *
+ * loco_analyzer が
+ * [128SPD] と表示するパケットを検出する。
+ *
+ * @param packet 対象パケット
+ *
+ * @retval true  Speedパケット
+ * @retval false それ以外
+ */
+static bool is_loco_speed_packet(
+    const DCC_PACKET *packet)
+{
+    uint8_t inst;
+
+    if(packet == NULL)
+    {
+        return false;
+    }
+
+    if((packet->data[0] & 0xC0) == 0xC0)
+    {
+        if(packet->length < 4)
+        {
+            return false;
+        }
+
+        inst = packet->data[2];
+    }
+    else
+    {
+        if(packet->length < 3)
+        {
+            return false;
+        }
+
+        inst = packet->data[1];
+    }
+
+    return (inst == 0x3F);
+}
+
+/**
+ * @brief 機関車ファンクションパケット判定
+ *
+ * F0～F68制御命令を検出する。
+ *
+ * @param packet 対象パケット
+ *
+ * @retval true  Functionパケット
+ * @retval false それ以外
+ */
+static bool is_loco_function_packet(
+    const DCC_PACKET *packet)
+{
+    uint8_t inst;
+
+    if(packet == NULL)
+    {
+        return false;
+    }
+
+    if((packet->data[0] & 0xC0) == 0xC0)
+    {
+        if(packet->length < 4)
+        {
+            return false;
+        }
+
+        inst = packet->data[2];
+    }
+    else
+    {
+        if(packet->length < 3)
+        {
+            return false;
+        }
+
+        inst = packet->data[1];
+    }
+
+    if((inst & 0xE0) == 0x80)
+    {
+        return true;
+    }
+
+    if((inst & 0xF0) == 0xB0)
+    {
+        return true;
+    }
+
+    if((inst & 0xF0) == 0xA0)
+    {
+        return true;
+    }
+
+    if(inst == 0xDE ||
+       inst == 0xDF ||
+      (inst >= 0xD8 &&
+       inst <= 0xDC))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+
+
+/**
  * @brief パケットからアドレスを取得
  *
  * アドレスフィルタ処理のため、
@@ -392,6 +502,24 @@ void packet_analyzer(
                 show_packet = false;
             }
             else if((packet->data[0] & 0xC0) == 0x80)
+            {
+                show_packet = false;
+            }
+
+            break;
+
+        case FILTER_LOCO_SPEED:
+
+            if(!is_loco_speed_packet(packet))
+            {
+                show_packet = false;
+            }
+
+            break;
+
+        case FILTER_LOCO_FUNCTION:
+
+            if(!is_loco_function_packet(packet))
             {
                 show_packet = false;
             }

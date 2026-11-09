@@ -96,6 +96,8 @@ static const char *filter_name[] =
 {
     "ALL",
     "Loco",
+    "Loco Speed",
+    "Loco Function",
     "Accessory",
     "OPS"
 };
@@ -166,8 +168,8 @@ void menu_show_main(void)
     printf("\r\n");
 
     printf(" 1. DCCパケット 表示\r\n");
-    printf(" 2. DCCパケット 統計\r\n");
-    printf(" 3. DCC 0/1信号 統計\r\n");
+    printf(" 2. DCCパケット 表示統計\r\n");
+    printf(" 3. DCC 0/1信号 受信統計\r\n");
     printf(" 4. 設定\r\n");
 
     printf("\r\n");
@@ -341,7 +343,7 @@ static void menu_show_packet_stats(void)
     printf("\r\n\r\n");
 
     printf("================================\r\n");
-    printf(" DCCパケット 統計\r\n");
+    printf(" DCCパケット 表示統計\r\n");
     printf("================================\r\n");
 
     printf("\r\n");
@@ -570,7 +572,7 @@ static void menu_show_signal_stats(void)
     printf("\r\n\r\n");
 
     printf("================================\r\n");
-    printf(" DCC 0/1信号 統計\r\n");
+    printf(" DCC 0/1信号 受信統計\r\n");
     printf("================================\r\n");
 
     printf("\r\n");
@@ -592,8 +594,6 @@ static void menu_show_signal_stats(void)
     printf(
         " Total Bit   : %5lu\r\n",
         (unsigned long)total_bit);
-
-    printf("\r\n");
 
     printf(
         " Bit1        : %5lu (%2lu.%01lu%%)\r\n",
@@ -818,22 +818,22 @@ static void menu_show_settings(void)
 
     printf("\r\n");
 
-    printf(" 1. パケット種別フィルタ  [%s]\r\n",
+    printf(" 1. パケット種別フィルタ [%s]\r\n",
            filter_name[monitor_config.filter]);
 
     printf(" 2. アドレスフィルタ     [%s]\r\n",
            address_filter_name());
 
-    printf(" 3. RESET表示 ON/OFF    [%s]\r\n",
+    printf(" 3. RESET表示 ON/OFF     [%s]\r\n",
            onoff(monitor_config.show_reset));
 
-    printf(" 4. IDLE表示 ON/OFF     [%s]\r\n",
+    printf(" 4. IDLE表示 ON/OFF      [%s]\r\n",
            onoff(monitor_config.show_idle));
 
-    printf(" 5. DCC 0/1判定 閾値    [%uus]\r\n",
+    printf(" 5. DCC 0/1判定 閾値     [%uus]\r\n",
            monitor_config.threshold_us);
 
-    printf(" 6. プリアンブル数      [%u]\r\n",
+    printf(" 6. プリアンブル数       [%u]\r\n",
            monitor_config.preamble_count);
 
     printf("\r\n");
@@ -856,6 +856,12 @@ static void menu_show_settings(void)
  * FILTER_LOCO
  *   機関車パケットのみ
  *
+ * FILTER_LOCO_SPEED
+ *   機関車パケット 速度制御のみ
+ * 
+ * FILTER_LOCO_FUNCTION
+ *   機関車パケット ファンクションのみ
+   
  * FILTER_ACCESSORY
  *   アクセサリパケットのみ
  *
@@ -867,11 +873,9 @@ static void menu_show_filter(void)
     current_menu = MENU_FILTER;
 
     printf("\r\n\r\n");
-
     printf("================================\r\n");
     printf(" パケット種別フィルタ\r\n");
     printf("================================\r\n");
-
     printf("\r\n");
 
     printf(" 現在 : %s\r\n",
@@ -881,14 +885,14 @@ static void menu_show_filter(void)
 
     printf(" 1. ALL\r\n");
     printf(" 2. Loco\r\n");
-    printf(" 3. Accessory\r\n");
-    printf(" 4. OPS\r\n");
+    printf(" 3. Loco (Speed)\r\n");
+    printf(" 4. Loco (Function)\r\n");
+    printf(" 5. Accessory\r\n");
+    printf(" 6. OPS\r\n");
 
     printf("\r\n");
-
     printf(" ESC : 戻る\r\n");
     printf("\r\n");
-
     printf("選択 > ");
 }
 
@@ -1326,10 +1330,20 @@ void menu_process_key(int ch)
 
                 case '3':
                     monitor_config.filter =
-                        FILTER_ACCESSORY;
+                        FILTER_LOCO_SPEED;
                     break;
 
                 case '4':
+                    monitor_config.filter =
+                        FILTER_LOCO_FUNCTION;
+                    break;
+
+                case '5':
+                    monitor_config.filter =
+                        FILTER_ACCESSORY;
+                    break;
+
+                case '6':
                     monitor_config.filter =
                         FILTER_OPS;
                     break;

@@ -131,11 +131,11 @@ void analyze_accessory(
      * 動作方向表示
      *
      * bit0:
-     * 0 = Straight
-     * 1 = Diverging
+     * 0 = Thrown  (Diverging)
+     * 1 = Closed  (Straight)
      */
     printf("%s",
            (packet->data[1] & 0x01)
-           ? "Diverging"
-           : "Straight");
+           ? "Closed Route（Straight）"
+           : "Thrown Route（Diverging）");
 }
