@@ -50,6 +50,8 @@ DCCパケットをリアルタイムに解析し、
 
 - ALL
 - Loco
+- Loco (Speed)
+- Loco (Function)
 - Accessory
 - OPS
 
@@ -75,6 +77,7 @@ Address Filter = 3
 - Function F5-F8
 - Function F9-F12
 - Function F13-F68
+- Advanced Consist Detection
 
 表示例
 
@@ -91,14 +94,14 @@ Basic Accessory Decoder Packet を解析します。
 表示内容
 
 - アクセサリアドレス
-- Straight
-- Diverging
+- Closed Route（Straight）
+- Thrown Route（Diverging）
 
 例
 
 ```text
-Acc:12 Straight
-Acc:12 Diverging
+Acc:12 Closed Route（Straight）
+Acc:12 Thrown Route（Diverging）
 ```
 
 ---

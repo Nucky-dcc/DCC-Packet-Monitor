@@ -269,6 +269,7 @@ Function Group 1 (F0-F4)
 Function Group 2 (F5-F8)
 Function Group 3 (F9-F12)
 Function Expansion (F13-F68)
+Advanced Consist Detection
 ```
 
 表示フィルタ
@@ -440,6 +441,19 @@ GUI表示
 
 などを追加しやすくする目的がある。
 
+### なぜ14Stepと28Stepを同時表示するのか
+
+NMRA Baseline Speed Instruction
+(01DCSSSS) は、
+DCCパケットのみからは
+14Step命令と28Step命令を
+完全に区別できない。
+
+そのため本ツールでは
+両解釈を同時表示し、
+利用者が実際のシステム構成と
+照合して判断できるようにした。
+
 ---
 
 # 9. Future Extensions
@@ -447,6 +461,9 @@ GUI表示
 候補
 
 ```text
+
+Advanced Consist 詳細解析
+
 Physical Register Mode
 
 Extended Accessory Packet

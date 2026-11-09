@@ -162,7 +162,7 @@ void menu_show_main(void)
     printf("\r\n\r\n");
 
     printf("======================================\r\n");
-    printf(" DCCパケットモニタ Ver1.0.0 (c) Nucky\r\n");
+    printf(" DCCパケットモニタ Ver1.1.0 (c) Nucky\r\n");
     printf("======================================\r\n");
 
     printf("\r\n");
