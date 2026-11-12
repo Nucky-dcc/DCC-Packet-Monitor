@@ -4,6 +4,12 @@
 
 ---
 
+### v1.2.0
+
+プリアンブル数の初期値を14から10に変更
+
+---
+
 ### v1.1.0
 
 NMRA Baseline Speed Instruction (14Step / 28Step) の解析機能を強化し、
