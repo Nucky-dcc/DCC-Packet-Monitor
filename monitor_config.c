@@ -106,8 +106,8 @@ void monitor_config_init(void)
      * プリアンブルが規定されている。
      *
      * 本ツールでは信号品質評価や
-     * 実験用途を考慮し、
-     * 初期値として14bitを採用している。
+     * 実験用途を考慮し、10-30bitの範囲で変更可能としている。
+     * 初期値として10bitを採用している。
      */
-    monitor_config.preamble_count = 14;
+    monitor_config.preamble_count = 10;
 }
