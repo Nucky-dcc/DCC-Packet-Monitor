@@ -4,6 +4,29 @@
 
 ---
 
+### v1.2.1
+
+ロコパケット解析の品質向上と 実機検証結果を反映。
+
+#### 修正
+128 Speed Step表示処理の不具合修正
+ロココマンド解析処理の制御フローを改善
+UNKNOWN表示へ誤って遷移する問題を修正
+
+#### 改善
+14Step / 28Step速度表示の精度向上
+STOP(I) / E-STOP(I)判定を改善
+NMRA S-9.2速度テーブル表記を調整
+Function F61-F68表示確認
+
+#### 検証
+Digitrax DCS50K による14Step再検証
+Digitrax DCS50K による28Step再検証
+Digitrax DCS50K 及び DesktopStation DS Zero による128Step再検証
+DesktopStation DS Zero による F61-F68動作確認
+
+---
+
 ### v1.2.0
 
 プリアンブル数の初期値を14から10に変更

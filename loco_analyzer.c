@@ -411,7 +411,7 @@ void analyze_loco(
     printf("Loco:%u ",
            address);
 
-    /*
+        /*
      * 128 Step Speed Command
      *
      * 3F xx
@@ -434,18 +434,24 @@ void analyze_loco(
 
         printf("%u",
                data & 0x7F);
+
+        return;
     }
 
     /*
-    * Advanced Consist Control Instruction
-    *
-    * NMRA S-9.2
-    *
-    * 0001DCSS
-    */
+     * Advanced Consist Control Instruction
+     *
+     * NMRA S-9.2
+     *
+     * 0001DCSS
+     *
+     * 現在は種別表示のみ。
+     */
     if((inst & 0xF0) == 0x10)
     {
-        print_advanced_consist(inst);
+        print_advanced_consist(
+            inst);
+
         return;
     }
 
@@ -455,15 +461,16 @@ void analyze_loco(
      * 01DCSSSS
      *
      * DCCパケットのみでは
-     * 14Step設定か
-     * 28Step設定か
+     * 14Stepか28Stepか
      * 判定できないため、
-     * 両解釈を表示する。
+     * 両方の解釈を表示する。
      */
-    else if((inst & 0xC0) == 0x40)
+    if((inst & 0xC0) == 0x40)
     {
         print_speed_14_28(
             inst);
+
+        return;
     }
 
     /*
@@ -471,7 +478,7 @@ void analyze_loco(
      *
      * F0～F4
      */
-    else if((inst & 0xE0) == 0x80)
+    if((inst & 0xE0) == 0x80)
     {
         printf("[F0-F4 ] ");
 
@@ -489,6 +496,8 @@ void analyze_loco(
 
         printf("%c",
                (inst & 0x08) ? '*' : '_');
+
+        return;
     }
 
     /*
@@ -496,13 +505,15 @@ void analyze_loco(
      *
      * F5～F8
      */
-    else if((inst & 0xF0) == 0xB0)
+    if((inst & 0xF0) == 0xB0)
     {
         printf("[F5-F8 ] ");
 
         print_function_bits(
             inst,
             4);
+
+        return;
     }
 
     /*
@@ -510,13 +521,15 @@ void analyze_loco(
      *
      * F9～F12
      */
-    else if((inst & 0xF0) == 0xA0)
+    if((inst & 0xF0) == 0xA0)
     {
         printf("[F9-F12] ");
 
         print_function_bits(
             inst,
             4);
+
+        return;
     }
 
     /*
@@ -526,17 +539,13 @@ void analyze_loco(
      *
      * NMRA拡張Function命令。
      */
-    else if(inst == 0xDE ||
-            inst == 0xDF ||
-           (inst >= 0xD8 &&
-            inst <= 0xDC))
+    if(inst == 0xDE ||
+       inst == 0xDF ||
+      (inst >= 0xD8 &&
+       inst <= 0xDC))
     {
         uint8_t start_f;
 
-        /*
-         * 命令コードから
-         * Function開始番号を求める。
-         */
         start_f =
             (inst == 0xDE)
             ? 13
@@ -552,17 +561,14 @@ void analyze_loco(
         print_function_bits(
             data,
             8);
+
+        return;
     }
 
     /*
      * 未対応命令
-     *
-     * 将来的な解析のため
-     * 命令コードを残す。
      */
-    else
-    {
-        printf("UNKNOWN INST=%02X",
-               inst);
-    }
+    printf("Unknown INST=%02X",
+           inst);
+
 }
